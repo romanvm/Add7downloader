@@ -145,7 +145,7 @@ namespace Add7downloader
                     {
                         for (int i = 0; i < subList.Count; i++)
                         {
-                            if (subList[i][1].ToLower().Contains(release.ToLower()))
+                            if (subList[i][1].ToLower().Contains(release.ToLower()) && !subList[i][1].Contains("- HI"))
                             {
                                 if (MessageBox.Show(this, String.Format("Do you want to auto-download \"{0}\" subtitles for\n{1}?", subList[i][1], fileName), "Matching subtitles found!", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                                 {

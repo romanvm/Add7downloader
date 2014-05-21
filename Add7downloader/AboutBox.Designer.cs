@@ -53,7 +53,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(160, 48);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Addic7ed.com\r\nsub downloader";
+            this.label1.Text = "Addic7ed.com\r\nSubs Downloader";
             // 
             // label2
             // 
