@@ -3,31 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.IO;
+
+using HtmlAgilityPack;
 
 namespace Add7downloader
 {
     class Addic7ed
     {
-        private const string SITE = "http://www.addic7ed.com";
-        private WebClient loader;
+        const string SITE = "http://www.addic7ed.com";        
 
-        public Addic7ed()
+        static string loadPage(string url, string referrer = null)
         {
-            loader = new WebClient();
-            loader.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:23.0) Gecko/20100101 Firefox/23.0");
-            loader.Headers.Add("Host", "www.addic7ed.com");
-            loader.Headers.Add("Accept-Charset", "UTF-8");
-            loader.Encoding = Encoding.UTF8;
-        }
-
-        private string loadPage(string url)
-        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; rv:23.0) Gecko/20100101 Firefox/23.0";
+            request.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+            request.Host = "www.addic7ed.com";
+            request.Headers.Add("Accept-Charset", "UTF-8");
+            request.AllowAutoRedirect = true;
+            if (referrer != null)
+            {
+                request.Referer = referrer;
+            }
             try
             {
-                string page = loader.DownloadString(url);
+                WebResponse response = request.GetResponse();
+                Stream httpStream = response.GetResponseStream();
+                string page;
+                using (var reader = new StreamReader(httpStream))
+                {
+                    page = reader.ReadToEnd();
+                }
                 return page;
             }
             catch (WebException ex)
@@ -36,16 +44,16 @@ namespace Add7downloader
             }
         }
 
-        public List<string[]> SearchEpisode(string showName, string season, string episode, string language = "English")
+        public static List<string[]> SearchEpisode(string showName, string season, string episode, string language = "English")
         {
             var listing = new List<string[]>();
             string show = WebUtility.UrlEncode(showName.Replace(":", ""));
             string searchURL = String.Format("{0}/search.php?search={1}+-+{2}+{3}&Submit=Search", SITE, show, season, episode);
             string resultsPage = loadPage(searchURL);
-            MatchCollection parse = Regex.Matches(resultsPage, "<td><a href=\"(.*?)\" debug=\".*?\">(.*?)</a></td>");
-            if (parse != null)
+            MatchCollection episodes = Regex.Matches(resultsPage, "<td><a href=\"(.*?)\" debug=\".*?\">(.*?)</a></td>");
+            if (episodes != null)
             {
-                foreach (Match ep in parse)
+                foreach (Match ep in episodes)
                 {
                     string url = SITE + "/" + ep.Groups[1].Value;
                     string name = ep.Groups[2].Value;
@@ -60,7 +68,7 @@ namespace Add7downloader
             return listing;
         }
 
-        public List<string[]> GetEpisode(string episodeURL, string language = "English")
+        public static List<string[]> GetEpisode(string episodeURL, string language = "English")
         {
             string page = loadPage(episodeURL);
             if (page != null)
@@ -74,7 +82,7 @@ namespace Add7downloader
             }
         }
 
-        public List<string[]> EpisodeParse(string episodePage, string language = "English")
+        public static List<string[]> EpisodeParse(string episodePage, string language = "English")
         {
             var listing = new List<string[]>();
             var document = new HtmlDocument();
@@ -117,6 +125,30 @@ namespace Add7downloader
                 }
             }
             return listing;
+        }
+
+        public static int SubDownload(string url, string referrer, string filename = "subtitles.srt")
+        {            
+            string subtitles = loadPage(url, referrer);
+            if (subtitles == null)
+            {
+                return 0;
+            }
+            else
+            {
+                if (subtitles.Substring(0, 9) != "<!DOCTYPE")
+                {
+                    using (var fileWriter = new StreamWriter(filename))
+                    {
+                        fileWriter.Write(subtitles);                        
+                    }
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }                
+            }           
         }
     }
 }

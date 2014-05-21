@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxShowName = new System.Windows.Forms.TextBox();
@@ -44,6 +45,7 @@
             this.buttonAbout = new System.Windows.Forms.Button();
             this.buttonDownloadSubs = new System.Windows.Forms.Button();
             this.labelStatus = new System.Windows.Forms.Label();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -61,6 +63,7 @@
             this.textBoxShowName.Name = "textBoxShowName";
             this.textBoxShowName.Size = new System.Drawing.Size(248, 20);
             this.textBoxShowName.TabIndex = 1;
+            this.toolTip.SetToolTip(this.textBoxShowName, "Enter the name of a TV-show here.");
             // 
             // buttonSearch
             // 
@@ -70,7 +73,9 @@
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(32, 32);
             this.buttonSearch.TabIndex = 2;
+            this.toolTip.SetToolTip(this.buttonSearch, "Search subtitles on addic7ed.com.");
             this.buttonSearch.UseVisualStyleBackColor = true;
+            this.buttonSearch.Click += new System.EventHandler(this.startSearch);
             // 
             // label2
             // 
@@ -87,6 +92,7 @@
             this.textBoxSeason.Name = "textBoxSeason";
             this.textBoxSeason.Size = new System.Drawing.Size(40, 20);
             this.textBoxSeason.TabIndex = 4;
+            this.toolTip.SetToolTip(this.textBoxSeason, "For better search results season# in 2-digit format, e.g. 04.");
             // 
             // textBoxEpisode
             // 
@@ -94,6 +100,7 @@
             this.textBoxEpisode.Name = "textBoxEpisode";
             this.textBoxEpisode.Size = new System.Drawing.Size(40, 20);
             this.textBoxEpisode.TabIndex = 5;
+            this.toolTip.SetToolTip(this.textBoxEpisode, "For better search results enter episode# in 2-digit format, e.g. 06.");
             // 
             // label3
             // 
@@ -112,15 +119,23 @@
             this.buttonFile.Name = "buttonFile";
             this.buttonFile.Size = new System.Drawing.Size(32, 32);
             this.buttonFile.TabIndex = 7;
+            this.toolTip.SetToolTip(this.buttonFile, "Select an episode video file to search for matching subtitles.");
             this.buttonFile.UseVisualStyleBackColor = true;
+            this.buttonFile.Click += new System.EventHandler(this.selectVideoFile);
             // 
             // listBox
             // 
+            this.listBox.AllowDrop = true;
             this.listBox.FormattingEnabled = true;
             this.listBox.Location = new System.Drawing.Point(8, 96);
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(360, 173);
             this.listBox.TabIndex = 9;
+            this.toolTip.SetToolTip(this.listBox, "Drag and drop an episode video file here to search for matching subtitles.");
+            this.listBox.SelectedValueChanged += new System.EventHandler(this.listItemSelected);
+            this.listBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.dropHandler);
+            this.listBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.dragHandler);
+            this.listBox.DoubleClick += new System.EventHandler(this.listDoubleClick);
             // 
             // buttonBack
             // 
@@ -130,7 +145,9 @@
             this.buttonBack.Name = "buttonBack";
             this.buttonBack.Size = new System.Drawing.Size(32, 32);
             this.buttonBack.TabIndex = 10;
+            this.toolTip.SetToolTip(this.buttonBack, "Return back to search results.");
             this.buttonBack.UseVisualStyleBackColor = true;
+            this.buttonBack.Click += new System.EventHandler(this.back);
             // 
             // buttonViewSubs
             // 
@@ -140,17 +157,21 @@
             this.buttonViewSubs.Name = "buttonViewSubs";
             this.buttonViewSubs.Size = new System.Drawing.Size(32, 32);
             this.buttonViewSubs.TabIndex = 11;
+            this.toolTip.SetToolTip(this.buttonViewSubs, "View available subs for the selected episode.");
             this.buttonViewSubs.UseVisualStyleBackColor = true;
+            this.buttonViewSubs.Click += new System.EventHandler(this.viewSubs);
             // 
             // buttonBrowser
             // 
             this.buttonBrowser.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonBrowser.BackgroundImage")));
             this.buttonBrowser.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonBrowser.Location = new System.Drawing.Point(104, 272);
+            this.buttonBrowser.Location = new System.Drawing.Point(72, 272);
             this.buttonBrowser.Name = "buttonBrowser";
             this.buttonBrowser.Size = new System.Drawing.Size(32, 32);
             this.buttonBrowser.TabIndex = 12;
+            this.toolTip.SetToolTip(this.buttonBrowser, "Open the episode page in a default web-browser.");
             this.buttonBrowser.UseVisualStyleBackColor = true;
+            this.buttonBrowser.Click += new System.EventHandler(this.openURL);
             // 
             // buttonAbout
             // 
@@ -160,17 +181,21 @@
             this.buttonAbout.Name = "buttonAbout";
             this.buttonAbout.Size = new System.Drawing.Size(32, 32);
             this.buttonAbout.TabIndex = 13;
+            this.toolTip.SetToolTip(this.buttonAbout, "About program.");
             this.buttonAbout.UseVisualStyleBackColor = true;
+            this.buttonAbout.Click += new System.EventHandler(this.showAbout);
             // 
             // buttonDownloadSubs
             // 
             this.buttonDownloadSubs.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("buttonDownloadSubs.BackgroundImage")));
             this.buttonDownloadSubs.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonDownloadSubs.Location = new System.Drawing.Point(72, 272);
+            this.buttonDownloadSubs.Location = new System.Drawing.Point(40, 272);
             this.buttonDownloadSubs.Name = "buttonDownloadSubs";
             this.buttonDownloadSubs.Size = new System.Drawing.Size(32, 32);
             this.buttonDownloadSubs.TabIndex = 14;
+            this.toolTip.SetToolTip(this.buttonDownloadSubs, "Download the selected subtitles.");
             this.buttonDownloadSubs.UseVisualStyleBackColor = true;
+            this.buttonDownloadSubs.Click += new System.EventHandler(this.download);
             // 
             // labelStatus
             // 
@@ -178,7 +203,6 @@
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(360, 16);
             this.labelStatus.TabIndex = 8;
-            this.labelStatus.Text = "Status Label";
             // 
             // MainWindow
             // 
@@ -203,6 +227,7 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "MainWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Addic7ed.com Sub Downloader";
@@ -228,6 +253,7 @@
         private System.Windows.Forms.Button buttonAbout;
         private System.Windows.Forms.Button buttonDownloadSubs;
         private System.Windows.Forms.Label labelStatus;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }
 
