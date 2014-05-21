@@ -118,7 +118,6 @@ namespace Add7downloader
 
         private void startSearch(object sender, EventArgs e)
         {
-            videoFile = "";
             search(textBoxShowName.Text, textBoxSeason.Text, textBoxEpisode.Text);
         }
 
