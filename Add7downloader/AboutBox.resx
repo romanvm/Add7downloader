@@ -121,7 +121,7 @@
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIAAAABJCAIAAAB6u7ngAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACw4AAAsOAUC+4UEAAB6fSURBVHhe7Xz5V1NX3+/JLFMSyDzPc0ISQggZmCcBQUFB
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAB6fSURBVHhe7Xz5V1NX3+/JLFMSyDzPc0ISQggZmCcBQUFB
         QZxwwAlxLGqpIuI8owiBEMKMSmttte1j59YBlUHF2fZ5n7bPc+9d77vWvT/cf+B+T0DFaFV63/f9oc1a
         n8XKd599vnuf77z32QcEab31ZmBab2JabiCAjnu4znsE321izwMA0n4Xab+DuG9Ah4BbgpgCAumXgQq3
         5SbIOsR7y1jX4lpdnbpgmbNio6Nyu+nYOfWRcyTfbcQzFNTBH0cgPQmY1huIZzjSe9N+uCdl1UaViGFQ
@@ -256,12 +256,11 @@
 </value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>A program for downloading English TV series subtitles from www.addic7ed.com.
-Please support this site which is the ultimate source of English substitles for ongoing TV series.
-This program is distributed under GPL license:
-http://www.gnu.org/licenses/gpl.html
+    <value>A program for downloading English TV series subtitles from www.addic7ed.com. Please support this site which is the ultimate source of English substitles for ongoing TV series.
 
-© Roman V. M. 2014.
+This program is distributed under GPL license: http://www.gnu.org/licenses/gpl.html
+
+© Roman V. M. 2013.
 
 Addic7ed.com logo is the property of the site owners.</value>
   </data>

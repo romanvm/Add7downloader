@@ -59,14 +59,14 @@
             // 
             this.label2.Location = new System.Drawing.Point(8, 64);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(248, 152);
+            this.label2.Size = new System.Drawing.Size(248, 160);
             this.label2.TabIndex = 2;
             this.label2.Text = resources.GetString("label2.Text");
             // 
             // buttonClose
             // 
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(96, 224);
+            this.buttonClose.Location = new System.Drawing.Point(96, 232);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 3;
@@ -80,7 +80,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonClose;
-            this.ClientSize = new System.Drawing.Size(264, 249);
+            this.ClientSize = new System.Drawing.Size(264, 257);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
