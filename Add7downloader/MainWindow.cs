@@ -230,7 +230,7 @@ namespace Add7downloader
             {               
                 if (videoFile != "")
                 {
-                    filename = fileName.Substring(0, fileName.Length - 3) + "srt";
+                    filename = videoFile.Substring(0, videoFile.Length - 3) + "srt";
                 }
                 else
                 {
@@ -244,7 +244,7 @@ namespace Add7downloader
                 {
                     var saveFileDialog = new SaveFileDialog();
                     saveFileDialog.Filter = "SRT subtitles (*.srt)|*.srt";
-                    saveFileDialog.FileName = filename;
+                    saveFileDialog.FileName = System.IO.Path.GetFileName(filename);
                     saveFileDialog.RestoreDirectory = true;
                     saveFileDialog.OverwritePrompt = true;
                     if (saveFileDialog.ShowDialog(this) == DialogResult.OK)

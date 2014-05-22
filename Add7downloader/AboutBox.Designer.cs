@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBox));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.buttonClose = new System.Windows.Forms.Button();
+            this.textBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,14 +55,6 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Addic7ed.com\r\nSubs Downloader";
             // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(8, 64);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(248, 160);
-            this.label2.TabIndex = 2;
-            this.label2.Text = resources.GetString("label2.Text");
-            // 
             // buttonClose
             // 
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -74,6 +66,16 @@
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.closeBox);
             // 
+            // textBox
+            // 
+            this.textBox.Location = new System.Drawing.Point(8, 64);
+            this.textBox.Multiline = true;
+            this.textBox.Name = "textBox";
+            this.textBox.ReadOnly = true;
+            this.textBox.Size = new System.Drawing.Size(248, 160);
+            this.textBox.TabIndex = 4;
+            this.textBox.Text = resources.GetString("textBox.Text");
+            // 
             // AboutBox
             // 
             this.AcceptButton = this.buttonClose;
@@ -81,8 +83,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonClose;
             this.ClientSize = new System.Drawing.Size(264, 257);
+            this.Controls.Add(this.textBox);
             this.Controls.Add(this.buttonClose);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -95,6 +97,7 @@
             this.Text = "About Program";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -102,7 +105,7 @@
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonClose;
+        private System.Windows.Forms.TextBox textBox;
     }
 }
