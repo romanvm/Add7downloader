@@ -58,7 +58,7 @@
             // buttonClose
             // 
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(96, 232);
+            this.buttonClose.Location = new System.Drawing.Point(96, 240);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 3;
@@ -72,7 +72,7 @@
             this.textBox.Multiline = true;
             this.textBox.Name = "textBox";
             this.textBox.ReadOnly = true;
-            this.textBox.Size = new System.Drawing.Size(248, 160);
+            this.textBox.Size = new System.Drawing.Size(248, 168);
             this.textBox.TabIndex = 4;
             this.textBox.Text = resources.GetString("textBox.Text");
             // 
@@ -82,7 +82,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonClose;
-            this.ClientSize = new System.Drawing.Size(264, 257);
+            this.ClientSize = new System.Drawing.Size(264, 265);
             this.Controls.Add(this.textBox);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.label1);

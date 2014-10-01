@@ -44,7 +44,7 @@ namespace Add7downloader
             buttonViewSubs.Visible = false;
             buttonBack.Visible = true;
             buttonDownloadSubs.Visible = found;
-            buttonBrowser.Visible = found;
+            buttonBrowser.Visible = true;
         }
 
         void buttonChanger()
@@ -331,7 +331,10 @@ namespace Add7downloader
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
             videoFile = files[0];
-            filenameParse();
+            if (new string[] {"mkv", "mp4", "avi", "MKV", "MP4", "AVI"}.Contains(videoFile.Substring(videoFile.Length - 3)))
+            {
+                filenameParse();
+            }            
         }
 
         private void showAbout(object sender, EventArgs e)
