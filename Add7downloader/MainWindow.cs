@@ -74,8 +74,8 @@ namespace Add7downloader
         void search(string show, string season, string episode, bool fromFile = false)
         {            
             this.showname = show;
-            this.season = season;
-            this.episode = episode;
+            this.season = season.PadLeft(2, '0');
+            this.episode = episode.PadLeft(2, '0');
             labelStatus.Text = "Searching...";
             Application.DoEvents();
             listBox.Items.Clear();
@@ -89,9 +89,9 @@ namespace Add7downloader
             Cursor.Current = Cursors.Default;
             if (episodeList != null && episodeList.Count > 0)
             {
-                for (int i = 0; i < episodeList.Count; i++)
+                foreach (var item in episodeList)
                 {
-                    listBox.Items.Add(episodeList[i][1]);
+                    listBox.Items.Add(item[1]);
                 }
                 labelStatus.Text = String.Format("Episodes found for {0} - {1}x{2}:", this.showname, this.season, this.episode);
                 epListButtons(true);
@@ -136,9 +136,9 @@ namespace Add7downloader
                 {
                     subListButtons(true);
                     listBox.Items.Clear();
-                    for (int i = 0; i < subList.Count; i++)
+                    foreach (var item in subList)
                     {
-                        listBox.Items.Add(subList[i][1]);
+                        listBox.Items.Add(item[1]);
                     }
                     labelStatus.Text = String.Format("Subs for {0}:", episodeList[epPosition][1]);
                     if (release != "")
@@ -244,6 +244,7 @@ namespace Add7downloader
                 {
                     var saveFileDialog = new SaveFileDialog();
                     saveFileDialog.Filter = "SRT subtitles (*.srt)|*.srt";
+                    saveFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(videoFile);
                     saveFileDialog.FileName = System.IO.Path.GetFileName(filename);
                     saveFileDialog.RestoreDirectory = true;
                     saveFileDialog.OverwritePrompt = true;
@@ -269,7 +270,7 @@ namespace Add7downloader
                     }
                 }
             }
-        }
+        } 
 
         private void back(object sender, EventArgs e)
         {

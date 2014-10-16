@@ -127,6 +127,7 @@
             // 
             this.listBox.AllowDrop = true;
             this.listBox.FormattingEnabled = true;
+            this.listBox.HorizontalScrollbar = true;
             this.listBox.Location = new System.Drawing.Point(8, 96);
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(360, 173);

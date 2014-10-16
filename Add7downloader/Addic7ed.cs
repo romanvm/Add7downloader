@@ -29,7 +29,7 @@ namespace Add7downloader
             }
             try
             {
-                WebResponse response = request.GetResponse();
+                WebResponse response = request.GetResponse();               
                 Stream httpStream = response.GetResponseStream();
                 string page;
                 using (var reader = new StreamReader(httpStream))
@@ -47,8 +47,8 @@ namespace Add7downloader
         public static List<string[]> SearchEpisode(string showName, string season, string episode, string language = "English")
         {
             var listing = new List<string[]>();
-            string show = WebUtility.UrlEncode(showName.Replace(":", "").Replace("US", "").Replace("UK", ""));
-            string searchURL = String.Format("{0}/search.php?search={1}+-+{2}+{3}&Submit=Search", SITE, show, season, episode);
+            string show = WebUtility.UrlEncode(showName.Replace(":", ""));
+            string searchURL = String.Format("{0}/search.php?search={1}+{2}+{3}&Submit=Search", SITE, show, season, episode);
             string resultsPage = loadPage(searchURL);
             MatchCollection episodes = Regex.Matches(resultsPage, "<td><a href=\"(.*?)\" debug=\".*?\">(.*?)</a></td>");
             if (episodes != null)
