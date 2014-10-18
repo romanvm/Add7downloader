@@ -15,62 +15,81 @@ namespace Add7downloader
     {
         const string SITE = "http://www.addic7ed.com";        
 
-        static string loadPage(string url, string referrer = null)
+        static string[] loadPage(string url, string referrer = null)
         {
+            string page;
+            string responseURI;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; rv:23.0) Gecko/20100101 Firefox/23.0";
             request.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
             request.Host = "www.addic7ed.com";
             request.Headers.Add("Accept-Charset", "UTF-8");
-            request.AllowAutoRedirect = true;
+            request.AllowAutoRedirect = true;            
             if (referrer != null)
             {
                 request.Referer = referrer;
             }
             try
             {
-                WebResponse response = request.GetResponse();               
-                Stream httpStream = response.GetResponseStream();
-                string page;
+                WebResponse response = request.GetResponse();
+                responseURI = response.ResponseUri.AbsoluteUri;
+                Stream httpStream = response.GetResponseStream();                
                 using (var reader = new StreamReader(httpStream))
                 {
                     page = reader.ReadToEnd();
-                }
-                return page;
+                }                
             }
             catch (WebException ex)
             {
-                return null;
+                page = null;
+                responseURI = null;
             }
+            return new string[2] { page, responseURI };
         }
 
-        public static List<string[]> SearchEpisode(string showName, string season, string episode, string language = "English")
+        public static object[] SearchEpisode(string showName, string season, string episode, string language = "English")
         {
             var listing = new List<string[]>();
+            string episodeURL;
             string show = WebUtility.UrlEncode(showName.Replace(":", ""));
-            string searchURL = String.Format("{0}/search.php?search={1}+{2}+{3}&Submit=Search", SITE, show, season, episode);
-            string resultsPage = loadPage(searchURL);
-            MatchCollection episodes = Regex.Matches(resultsPage, "<td><a href=\"(.*?)\" debug=\".*?\">(.*?)</a></td>");
-            if (episodes != null)
+            string searchURL = String.Format("{0}/search.php?search={1}+{2}x{3}&Submit=Search", SITE, show, season, episode);
+            string[] searchResult = loadPage(searchURL);
+            if (searchResult[0] != null)
             {
-                foreach (Match ep in episodes)
+                string resultsPage = searchResult[0];
+                Match checkEpisode = Regex.Match(resultsPage, "(<table width=\"100%\" border=\"0\" align=\"center\" class=\"tabel95\">)");
+                if (checkEpisode.Groups.Count > 1)
                 {
-                    string url = SITE + "/" + ep.Groups[1].Value;
-                    string name = ep.Groups[2].Value;
-                    var item = new string[2] { url, name };
-                    listing.Add(item);
+                    listing = EpisodeParse(resultsPage, language);
+                    episodeURL = searchResult[1];
                 }
-            }
+                else
+                {
+                    episodeURL = "";
+                    MatchCollection episodes = Regex.Matches(resultsPage, "<td><a href=\"(.*?)\" debug=\".*?\">(.*?)</a></td>");
+                    if (episodes != null)
+                    {
+                        foreach (Match ep in episodes)
+                        {
+                            string url = SITE + "/" + ep.Groups[1].Value;
+                            string name = ep.Groups[2].Value;
+                            var item = new string[2] { url, name };
+                            listing.Add(item);
+                        }
+                    }                    
+                }
+            }       
             else
             {
                 listing = null;
+                episodeURL = null;
             }
-            return listing;
+            return new object[2] { listing, episodeURL };
         }
 
         public static List<string[]> GetEpisode(string episodeURL, string language = "English")
         {
-            string page = loadPage(episodeURL);
+            string page = loadPage(episodeURL)[0];
             if (page != null)
             {
                 List<string[]> listing = EpisodeParse(page, language);
@@ -129,7 +148,7 @@ namespace Add7downloader
 
         public static int SubDownload(string url, string referrer, string filename = "subtitles.srt")
         {            
-            string subtitles = loadPage(url, referrer);
+            string subtitles = loadPage(url, referrer)[0];
             if (subtitles == null)
             {
                 return 0;

@@ -39,12 +39,13 @@ namespace Add7downloader
             buttonBrowser.Visible = found;            
         }
 
-        void subListButtons(bool found = false)
+        void subListButtons(bool found = false, bool oneResult = true)
         {
             buttonViewSubs.Visible = false;
-            buttonBack.Visible = true;
+            buttonBack.Visible = !oneResult;
             buttonDownloadSubs.Visible = found;
             buttonBrowser.Visible = true;
+            buttonBrowser.Enabled = true;
         }
 
         void buttonChanger()
@@ -67,7 +68,7 @@ namespace Add7downloader
             }
             else if (label == "Subs")
             {
-                buttonDownloadSubs.Enabled = isSelected;
+                buttonDownloadSubs.Enabled = isSelected;                
             }
         }       
 
@@ -85,20 +86,29 @@ namespace Add7downloader
                 release = "";
             }
             Cursor.Current = Cursors.WaitCursor;
-            episodeList = Addic7ed.SearchEpisode(this.showname, this.season, this.episode);
+            object[] searchResults = Addic7ed.SearchEpisode(this.showname, this.season, this.episode);
             Cursor.Current = Cursors.Default;
+            episodeList = (List<string[]>)searchResults[0];
             if (episodeList != null && episodeList.Count > 0)
             {
-                foreach (var item in episodeList)
+                if ((string)searchResults[1] != "")
                 {
-                    listBox.Items.Add(item[1]);
+                    subList = episodeList;
+                    viewSubs(true);
                 }
-                labelStatus.Text = String.Format("Episodes found for {0} - {1}x{2}:", this.showname, this.season, this.episode);
-                epListButtons(true);
+                else
+                {
+                    foreach (var item in episodeList)
+                    {
+                        listBox.Items.Add(item[1]);
+                    }
+                    labelStatus.Text = String.Format("Episodes found for {0} - {1}x{2}:", this.showname, this.season, this.episode);
+                    epListButtons(true);
+                }
             }
             else
             {
-                if (episodeList == null)
+                if (searchResults[0] == null && searchResults[1] == null)
                 {
                     MessageBox.Show(this, "Unable to connect to addic7ed.com.", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -121,7 +131,7 @@ namespace Add7downloader
             search(textBoxShowName.Text, textBoxSeason.Text, textBoxEpisode.Text);
         }
 
-        private void viewSubs(object sender, EventArgs e)
+        private void getSubs(object sender, EventArgs e)
         {
             epPosition = listBox.SelectedIndex;
             if (epPosition >= 0)
@@ -132,42 +142,54 @@ namespace Add7downloader
                 Cursor.Current = Cursors.WaitCursor;
                 subList = Addic7ed.GetEpisode(episodeList[epPosition][0]);
                 Cursor.Current = Cursors.Default;
-                if (subList != null && subList.Count > 0)
+                viewSubs(false);
+            }
+        }
+
+        private void viewSubs(bool oneResult = true)
+        {
+            if (subList != null && subList.Count > 0)
+            {
+                subListButtons(true, oneResult);
+                listBox.Items.Clear();
+                foreach (var item in subList)
                 {
-                    subListButtons(true);
-                    listBox.Items.Clear();
-                    foreach (var item in subList)
-                    {
-                        listBox.Items.Add(item[1]);
-                    }
-                    labelStatus.Text = String.Format("Subs for {0}:", episodeList[epPosition][1]);
-                    if (release != "")
-                    {
-                        for (int i = 0; i < subList.Count; i++)
-                        {
-                            if (subList[i][1].ToLower().Contains(release.ToLower()) && !subList[i][1].Contains("- HI"))
-                            {
-                                if (MessageBox.Show(this, String.Format("Do you want to auto-download \"{0}\" subtitles for\n{1}?", subList[i][1], fileName), "Matching subtitles found!", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                                {
-                                    listBox.SelectedIndex = i;
-                                    downloadSubs(true);
-                                }
-                                else
-                                {
-                                    listBox.SelectedIndex = -1;
-                                }
-                                break;
-                            }
-                        }
-                    }
+                    listBox.Items.Add(item[1]);
+                }
+                if (oneResult)
+                {
+                    labelStatus.Text = String.Format("Subs for {0} {1}x{2}:", this.showname, this.season, this.episode); 
                 }
                 else
                 {
-                    labelStatus.Text = String.Format("No English subtitles for {0} found!", episodeList[epPosition][1]);
-                    subListButtons(false);
+                    labelStatus.Text = String.Format("Subs for {0}:", episodeList[epPosition][1]);
+                }                
+                if (release != "")
+                {
+                    for (int i = 0; i < subList.Count; i++)
+                    {
+                        if (subList[i][1].ToLower().Contains(release.ToLower()) && !subList[i][1].Contains("- HI"))
+                        {
+                            if (MessageBox.Show(this, String.Format("Do you want to auto-download \"{0}\" subtitles for\n{1}?", subList[i][1], fileName), "Matching subtitles found!", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                            {
+                                listBox.SelectedIndex = i;
+                                downloadSubs(true);
+                            }
+                            else
+                            {
+                                listBox.SelectedIndex = -1;
+                            }
+                            break;
+                        }
+                    }
                 }
-                buttonChanger();
             }
+            else
+            {
+                labelStatus.Text = String.Format("No English subtitles for {0} found!", episodeList[epPosition][1]);
+                subListButtons(false, oneResult);
+            }
+            buttonChanger();            
         }
 
         private void selectVideoFile(object sender, EventArgs e)
@@ -186,7 +208,7 @@ namespace Add7downloader
         {
             fileName = System.IO.Path.GetFileName(videoFile);
             Match relMatch = Regex.Match(fileName, @"\-(.*?)\.");
-            if (relMatch != null)
+            if (relMatch.Groups.Count > 1)
             {
                 release = relMatch.Groups[1].Value;
             }
@@ -205,8 +227,8 @@ namespace Add7downloader
                 if (episodeData.Groups.Count == 4)
                 {
                     string show = episodeData.Groups[1].Value.Replace(".", " ");
-                    string seasonNum = episodeData.Groups[2].Value;
-                    string episNum = episodeData.Groups[3].Value;
+                    string seasonNum = episodeData.Groups[2].Value.PadLeft(2, '0');
+                    string episNum = episodeData.Groups[3].Value.PadLeft(2, '0');
                     textBoxShowName.Text = show;
                     textBoxSeason.Text = seasonNum;
                     textBoxEpisode.Text = episNum;
@@ -289,7 +311,7 @@ namespace Add7downloader
             string results = labelStatus.Text.Substring(0, 4);
             if (results == "Epis")
             {
-                viewSubs(null, null);
+                getSubs(null, null);
             }
             else if (results == "Subs")
             {

@@ -160,7 +160,7 @@
             this.buttonViewSubs.TabIndex = 11;
             this.toolTip.SetToolTip(this.buttonViewSubs, "View available subs for the selected episode.");
             this.buttonViewSubs.UseVisualStyleBackColor = true;
-            this.buttonViewSubs.Click += new System.EventHandler(this.viewSubs);
+            this.buttonViewSubs.Click += new System.EventHandler(this.getSubs);
             // 
             // buttonBrowser
             // 
