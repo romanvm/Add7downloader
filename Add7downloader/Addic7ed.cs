@@ -44,61 +44,67 @@ namespace Add7downloader
                 page = null;
                 responseURI = null;
             }
-            return new string[2] { page, responseURI };
+            return new string[] { page, responseURI };
         }
 
-        public static object[] SearchEpisode(string showName, string season, string episode, string language = "English")
+        public static async Task<object[]> SearchEpisodeAsync(string showName, string season, string episode, string language = "English")
         {
-            var listing = new List<string[]>();
-            string episodeURL;
-            string show = WebUtility.UrlEncode(showName.Replace(":", ""));
-            string searchURL = String.Format("{0}/search.php?search={1}+{2}x{3}&Submit=Search", SITE, show, season, episode);
-            string[] searchResult = loadPage(searchURL);
-            if (searchResult[0] != null)
+            return await Task.Run(() =>
             {
-                string resultsPage = searchResult[0];
-                Match checkEpisode = Regex.Match(resultsPage, "(<table width=\"100%\" border=\"0\" align=\"center\" class=\"tabel95\">)");
-                if (checkEpisode.Groups.Count > 1)
+                var listing = new List<string[]>();
+                string episodeURL;
+                string show = WebUtility.UrlEncode(showName.Replace(":", ""));
+                string searchURL = String.Format("{0}/search.php?search={1}+{2}x{3}&Submit=Search", SITE, show, season, episode);
+                string[] searchResult = loadPage(searchURL);
+                if (searchResult[0] != null)
                 {
-                    listing = EpisodeParse(resultsPage, language);
-                    episodeURL = searchResult[1];
+                    string resultsPage = searchResult[0];
+                    Match checkEpisode = Regex.Match(resultsPage, "(<table width=\"100%\" border=\"0\" align=\"center\" class=\"tabel95\">)");
+                    if (checkEpisode.Groups.Count > 1)
+                    {
+                        listing = EpisodeParse(resultsPage, language);
+                        episodeURL = searchResult[1];
+                    }
+                    else
+                    {
+                        episodeURL = "";
+                        MatchCollection episodes = Regex.Matches(resultsPage, "<td><a href=\"(.*?)\" debug=\".*?\">(.*?)</a></td>");
+                        if (episodes != null)
+                        {
+                            foreach (Match ep in episodes)
+                            {
+                                string url = SITE + "/" + ep.Groups[1].Value;
+                                string name = ep.Groups[2].Value;
+                                var item = new string[2] { url, name };
+                                listing.Add(item);
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    episodeURL = "";
-                    MatchCollection episodes = Regex.Matches(resultsPage, "<td><a href=\"(.*?)\" debug=\".*?\">(.*?)</a></td>");
-                    if (episodes != null)
-                    {
-                        foreach (Match ep in episodes)
-                        {
-                            string url = SITE + "/" + ep.Groups[1].Value;
-                            string name = ep.Groups[2].Value;
-                            var item = new string[2] { url, name };
-                            listing.Add(item);
-                        }
-                    }                    
+                    listing = null;
+                    episodeURL = null;
                 }
-            }       
-            else
-            {
-                listing = null;
-                episodeURL = null;
-            }
-            return new object[2] { listing, episodeURL };
+                return new object[] { listing, episodeURL };
+            });
         }
 
-        public static List<string[]> GetEpisode(string episodeURL, string language = "English")
+        public static async Task<List<string[]>> GetEpisodeAsync(string episodeURL, string language = "English")
         {
-            string page = loadPage(episodeURL)[0];
-            if (page != null)
+            return await Task.Run(() =>
             {
-                List<string[]> listing = EpisodeParse(page, language);
-                return listing;
-            }
-            else
-            {
-                return null;
-            }
+                string page = loadPage(episodeURL)[0];
+                if (page != null)
+                {
+                    List<string[]> listing = EpisodeParse(page, language);
+                    return listing;
+                }
+                else
+                {
+                    return null;
+                }
+            });            
         }
 
         public static List<string[]> EpisodeParse(string episodePage, string language = "English")
@@ -146,28 +152,31 @@ namespace Add7downloader
             return listing;
         }
 
-        public static int SubDownload(string url, string referrer, string filename = "subtitles.srt")
-        {            
-            string subtitles = loadPage(url, referrer)[0];
-            if (subtitles == null)
+        public static async Task<int> SubDownloadAsync(string url, string referrer, string filename = "subtitles.srt")
+        {
+            return await Task.Run(() =>
             {
-                return 0;
-            }
-            else
-            {
-                if (subtitles.Substring(0, 9) != "<!DOCTYPE")
+                string subtitles = loadPage(url, referrer)[0];
+                if (subtitles == null)
                 {
-                    using (var fileWriter = new StreamWriter(filename))
-                    {
-                        fileWriter.Write(subtitles);                        
-                    }
-                    return 1;
+                    return 0;
                 }
                 else
                 {
-                    return -1;
-                }                
-            }           
+                    if (subtitles.Substring(0, 9) != "<!DOCTYPE")
+                    {
+                        using (var fileWriter = new StreamWriter(filename))
+                        {
+                            fileWriter.Write(subtitles);
+                        }
+                        return 1;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+            });                      
         }
     }
 }

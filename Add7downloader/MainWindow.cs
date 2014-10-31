@@ -72,7 +72,7 @@ namespace Add7downloader
             }
         }       
 
-        void search(string show, string season, string episode, bool fromFile = false)
+        async void search(string show, string season, string episode, bool fromFile = false)
         {            
             this.showname = show;
             this.season = season.PadLeft(2, '0');
@@ -86,7 +86,7 @@ namespace Add7downloader
                 release = "";
             }
             Cursor.Current = Cursors.WaitCursor;
-            object[] searchResults = Addic7ed.SearchEpisode(this.showname, this.season, this.episode);
+            object[] searchResults = await Addic7ed.SearchEpisodeAsync(this.showname, this.season, this.episode);
             Cursor.Current = Cursors.Default;
             episodeList = (List<string[]>)searchResults[0];
             if (episodeList != null && episodeList.Count > 0)
@@ -131,7 +131,7 @@ namespace Add7downloader
             search(textBoxShowName.Text, textBoxSeason.Text, textBoxEpisode.Text);
         }
 
-        private void getSubs(object sender, EventArgs e)
+        private async void getSubs(object sender, EventArgs e)
         {
             epPosition = listBox.SelectedIndex;
             if (epPosition >= 0)
@@ -140,7 +140,7 @@ namespace Add7downloader
                 labelStatus.Text = "Loading...";
                 Application.DoEvents();
                 Cursor.Current = Cursors.WaitCursor;
-                subList = Addic7ed.GetEpisode(episodeList[epPosition][0]);
+                subList = await Addic7ed.GetEpisodeAsync(episodeList[epPosition][0]);
                 Cursor.Current = Cursors.Default;
                 viewSubs(false);
             }
@@ -243,7 +243,7 @@ namespace Add7downloader
             }
         }
 
-        void downloadSubs(bool auto = false)
+        async void downloadSubs(bool auto = false)
         {
             string filename;
             string subFile = "";
@@ -277,7 +277,7 @@ namespace Add7downloader
                 }
                 if (subFile != "")
                 {                    
-                    int result = Addic7ed.SubDownload(subList[position][0], episodeList[epPosition][0], subFile);
+                    int result = await Addic7ed.SubDownloadAsync(subList[position][0], episodeList[epPosition][0], subFile);
                     if (result == 1)
                     {
                         MessageBox.Show(this, String.Format("Subtitles for {0} downloaded.", fileName), "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
