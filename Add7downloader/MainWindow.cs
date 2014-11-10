@@ -86,6 +86,7 @@ namespace Add7downloader
                 release = "";
             }
             Cursor.Current = Cursors.WaitCursor;
+            Application.DoEvents();
             object[] searchResults = await Addic7ed.SearchEpisodeAsync(this.showname, this.season, this.episode);
             Cursor.Current = Cursors.Default;
             episodeList = (List<string[]>)searchResults[0];
@@ -137,9 +138,9 @@ namespace Add7downloader
             if (epPosition >= 0)
             {
                 listBox.Items.Clear();
-                labelStatus.Text = "Loading...";
-                Application.DoEvents();
+                labelStatus.Text = "Loading...";                
                 Cursor.Current = Cursors.WaitCursor;
+                Application.DoEvents();
                 subList = await Addic7ed.GetEpisodeAsync(episodeList[epPosition][0]);
                 Cursor.Current = Cursors.Default;
                 viewSubs(false);
